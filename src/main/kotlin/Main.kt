@@ -6,17 +6,14 @@ import io.ktor.server.routing.*
 import java.sql.DriverManager
 
 fun main() {
-    // Получаем URL ClickHouse из переменной окружения или используем локальный по умолчанию
-    val jdbcUrl = System.getenv("CLICKHOUSE_JDBC_URL") ?: "jdbc:clickhouse://localhost:8123/default"
+    val jdbcUrl = System.getenv("CLICKHOUSE_JDBC_URL") ?: "jdbc:clickhouse://localhost:8123/ktor_db"
     val user = System.getenv("CLICKHOUSE_USER") ?: "default"
     val password = System.getenv("CLICKHOUSE_PASSWORD") ?: "clickhouse"
 
-    // Создаём подключение (одно для простоты; в продакшене используйте пул)
     val connection by lazy {
         DriverManager.getConnection(jdbcUrl, user, password)
     }
 
-    // Запускаем Ktor-сервер
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         routing {
             get("/") {
@@ -45,16 +42,16 @@ fun main() {
                             appendLine("<ul>")
                             while (rs.next()) {
                                 val page = rs.getString("page")
-                                val user = rs.getString("user_id")
+                                val userId = rs.getString("user_id")
                                 val time = rs.getString("timestamp")
-                                appendLine("<li>$page — $user at $time</li>")
+                                appendLine("<li>$page — $userId at $time</li>")
                             }
                             appendLine("</ul>")
                         }
                     }
                     call.respondText(result, contentType = io.ktor.http.ContentType.Text.Html)
                 } catch (e: Exception) {
-                    call.respondText("Database error: ${e.message}")
+                    call.respondText("Query failed: ${e.message}")
                 }
             }
 
@@ -63,7 +60,7 @@ fun main() {
                     connection.createStatement().use { stmt ->
                         stmt.execute("INSERT INTO clicks (page, user_id) VALUES ('/home', 'user_${System.currentTimeMillis() % 1000}')")
                     }
-                    call.respondText("✅ Click inserted!")
+                    call.respondText("✅ Click inserted into ClickHouse!")
                 } catch (e: Exception) {
                     call.respondText("Insert failed: ${e.message}")
                 }
