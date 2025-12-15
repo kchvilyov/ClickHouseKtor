@@ -94,18 +94,44 @@
             <artifactId>ktor-server-netty-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-server-content-negotiation-jvm</artifactId>
-            <version>${ktor.version}</version>
-        </dependency>
+
+        <!-- JSON -->
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-serialization-kotlinx-json-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-content-negotiation-jvm</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
 
-        <!-- Тестирование -->
+        <!-- JDBC для ClickHouse -->
+        <dependency>
+            <groupId>com.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+            <version>0.9.4</version>
+            <classifier>all</classifier>
+        </dependency>
+
+        <!-- Логгирование: Добавьте ОДИН из вариантов -->
+        <!-- Вариант 1: Простой логгер (для разработки) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.12</version>
+        </dependency>
+        <!-- Вариант 2: Logback (лучше для production) -->
+        <!--
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.14</version>
+        </dependency>
+        -->
+
+        <!-- Тесты -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
@@ -116,12 +142,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-server-test-host-jvm</artifactId>
-            <version>${ktor.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
